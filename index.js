@@ -16,18 +16,34 @@ const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-var contrats = require('./contrats');
-
 app.get('/', function (req, res) {
-  console.log('get / OK');
+  console.log('GET / OK');
   res.send("GET de base");
 });
 
 app.get('/contrats', function (req, res) {
-  console.log('get /contrat OK');
+  let contrats = require('./contrats');
+  console.log('GET /contrat OK');
   res.send(contrats);
 });
 
+app.get('/clauses', function (req, res) {
+  let clauses = require('./clauses');
+  console.log('GET /clauses OK');
+  res.send(clauses);
+});
+
+app.get('/shuttles', function (req, res) {
+  let shuttles = require('./shuttles');
+  console.log('GET /shuttles OK');
+  res.send(shuttles);
+});
+
+app.get('/hotels', function (req, res) {
+  let hotels = require('./hotels');
+  console.log('GET /hotels OK');
+  res.send(hotels);
+});
 
 app.listen(port, function () {
   console.log('App sur port ' + port);
