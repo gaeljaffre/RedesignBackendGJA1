@@ -16,9 +16,19 @@ const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-var contrats=[{id: 1, name: 'TOTAL', numero: 3}];
+var contrats = require('./contrats');
 
-app.get('/contrat', function (req, res) {
+app.get('/', function (req, res) {
+  console.log('get / OK');
+  res.send("GET de base");
+});
+
+app.get('/contrats', function (req, res) {
   console.log('get /contrat OK');
   res.send(contrats);
+});
+
+
+app.listen(port, function () {
+  console.log('App sur port ' + port);
 });
