@@ -44,6 +44,15 @@ var hotels = [
     prixMoyen: 85,
     remise: 25,
   },
+  {
+    id: 6,
+    name: "Formule 1",
+    description: 'The showers are down the hall',
+    ddv: '01/01/2017',
+    dfv: '31/12/2028',
+    prixMoyen: 49,
+    remise: 8,
+  },
 
 ];
 

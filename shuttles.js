@@ -49,6 +49,16 @@ var shuttles=[
     remise: 22,
     type: "rental",
   },
+  {
+    id: 6,
+    name: 'Uber',
+    description: 'Random experience, random prices',
+    ddv: '01/01/2018',
+    dfv: '31/12/2024',
+    prixMoyen: 30,
+    remise: 10,
+    type: "shuttle",
+  },
 ];
 
 module.exports = shuttles;
