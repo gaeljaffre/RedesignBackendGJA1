@@ -1,5 +1,6 @@
-var clauses = [
+const clauses = [
   {
+    id: 1,
     idContrat: 1,
     ori: 'PAR',
     des: 'TLS',
@@ -11,7 +12,8 @@ var clauses = [
     remise: 23,
   },
   {
-    idContrat: 1,
+    id: 2,
+    idContrat: 2,
     ori: 'PAR',
     des: 'TLS',
     cdr: 'D',
@@ -22,7 +24,8 @@ var clauses = [
     remise: 15,
   },
   {
-    idContrat: 1,
+    id: 3,
+    idContrat: 2,
     ori: 'PAR',
     des: 'TLS',
     cdr: 'Y',
@@ -34,6 +37,7 @@ var clauses = [
     remise: 4,
 },
   {
+    id: 4,
     idContrat: 1,
     ori: 'TLS',
     des: 'SIN',
@@ -45,6 +49,7 @@ var clauses = [
     remise: 35,
   },
   {
+    id: 5,
     idContrat: 1,
     ori: 'TLS',
     des: 'SIN',
@@ -56,7 +61,8 @@ var clauses = [
     remise: 22,
   },
   {
-    idContrat: 1,
+    id: 6,
+    idContrat: 3,
     ori: 'TLS',
     des: 'SIN',
     cdr: 'Y',
@@ -68,7 +74,8 @@ var clauses = [
     remise: 5,
 },
   {
-    idContrat: 1,
+    id: 7,
+    idContrat: 3,
     ori: 'TLS',
     des: 'SIN',
     cdr: 'Y',
@@ -81,4 +88,17 @@ var clauses = [
   }, 
 ];
 
-module.exports = clauses;
+//module.exports = clauses;
+
+const getListeClauses = (contratId) => {
+  var liste = [];
+  clauses.forEach(clause => {
+    //console.log("clause " + clause.id); 
+    if(clause.idContrat == contratId) {
+      liste.push(clause);
+    }
+  });
+  return liste;
+};
+
+module.exports = { clauses, getListeClauses };

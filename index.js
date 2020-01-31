@@ -33,6 +33,15 @@ app.get('/clauses', function (req, res) {
   res.send(clauses);
 });
 
+app.get('/clauses/:id', function (req, res) {
+  const moduleClauses = require('./clauses');
+  let clauses = moduleClauses.clauses;
+  var id = req.params.id;
+  console.log('GET /clauses OK sur id ' + id);
+  let clausesFiltrees = moduleClauses.getListeClauses(id);
+  res.send(clausesFiltrees);
+});
+
 app.get('/shuttles', function (req, res) {
   let shuttles = require('./shuttles');
   console.log('GET /shuttles OK');
