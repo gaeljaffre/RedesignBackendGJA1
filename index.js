@@ -18,7 +18,7 @@ app.use(bodyParser.json());
 
 app.get('/', function (req, res) {
   console.log('GET / OK');
-  res.send("GET de base");
+  res.send("Petit curieux !");
 });
 
 app.get('/contrats', function (req, res) {
@@ -27,6 +27,7 @@ app.get('/contrats', function (req, res) {
   res.send(contrats);
 });
 
+// à enlever une fois en BD
 app.get('/clauses', function (req, res) {
   let clauses = require('./clauses');
   console.log('GET /clauses OK');
