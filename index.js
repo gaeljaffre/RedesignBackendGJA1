@@ -16,6 +16,9 @@ const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+// ===========
+// === GET ===
+// ===========
 app.get('/', function (req, res) {
   console.log('GET / OK');
   res.send("Petit curieux !");
@@ -54,6 +57,19 @@ app.get('/hotels', function (req, res) {
   console.log('GET /hotels OK');
   res.send(hotels);
 });
+
+// ============
+// === POST ===
+// ============
+app.post('/shuttles', function(req, res) {
+  console.log('post / OK : ' + req.body.name
+  + '(' + req.body.type + ')');
+  res.status(201).send(req.body);
+});
+
+
+
+
 
 app.listen(port, function () {
   console.log('App sur port ' + port);
