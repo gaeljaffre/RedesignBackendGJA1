@@ -16,6 +16,54 @@ const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+
+// Connexion Firebase
+
+var firebase = require("firebase-admin");
+
+var serviceAccount = require("./serviceAccountKey.json");
+
+firebase.initializeApp({
+  credential: firebase.credential.cert(serviceAccount),
+  databaseURL: "https://testbd1-c5167.firebaseio.com"
+});
+
+
+/*
+  var ref = firebase.database().ref('/contrats');
+  var obj = {"id":1,"name":"TOTAL","description":"The most famous client","country":"XX","type":"Global market","gin":"180012345678","ddv":"01/01/2020","dfv":"31/12/2020"};
+  ref.push(obj);
+*/
+
+/*
+var ref = firebase.database().ref('/contrats');
+
+var obj = {"id":2,"name":"BUTAGAZ","description":"The best case study for Catherine","country":"FR","type":"Standard","gin":"180000000001","ddv":"01/01/2020","dfv":"31/12/2020"};
+ref.push(obj);
+*/
+
+//var db = firebase.database();
+
+app.get('/firebase', function (req, res) {
+  console.log('GET /firebase');
+
+  const refObjet = firebase.database().ref('/contrats');
+  console.log("ref() : " + refObjet.toString());
+
+  var data;
+  refObjet.once("value", function(snapshot) {
+    data = snapshot.val();   // JSON format.
+    console.log(data);
+    res.send(data);
+    }
+  );
+  console.log("data = " + data);
+
+});
+
+
+
+
 // ===========
 // === GET ===
 // ===========
@@ -66,8 +114,6 @@ app.post('/shuttles', function(req, res) {
   + '(' + req.body.type + ')');
   res.status(201).send(req.body);
 });
-
-
 
 
 
