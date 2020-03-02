@@ -44,16 +44,37 @@ ref.push(obj);
 
 //var db = firebase.database();
 
+function snapshotToArray(snapshot) {
+    var returnArr = [];
+
+    snapshot.forEach(function(childSnapshot) {
+        var item = childSnapshot.val();
+        item.key = childSnapshot.key;
+
+        returnArr.push(item);
+    });
+
+    return returnArr;
+};
+
 app.get('/firebase', function (req, res) {
   console.log('GET /firebase');
 
   const refObjet = firebase.database().ref('/contrats');
   console.log("ref() : " + refObjet.toString());
 
-  var data;
+  var data = [];
   refObjet.once("value", function(snapshot) {
-    data = snapshot.val();   // JSON format.
-    console.log(data);
+    data = snapshot;   // JSON format
+
+    let contrats = snapshotToArray(data);
+
+    for(let contrat of contrats) {
+      console.log("contrat = " + contrat.name);
+    }
+   
+    //console.log(data);
+
     res.send(data);
     }
   );
