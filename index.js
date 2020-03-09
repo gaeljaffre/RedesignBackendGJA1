@@ -42,6 +42,8 @@ var obj = {"id":2,"name":"BUTAGAZ","description":"The best case study for Cather
 ref.push(obj);
 */
 
+var ref = firebase.database().ref('/contrats');
+
 //var db = firebase.database();
 
 function snapshotToArray(snapshot) {
@@ -57,31 +59,61 @@ function snapshotToArray(snapshot) {
     return returnArr;
 };
 
-app.get('/firebase', function (req, res) {
-  console.log('GET /firebase');
+app.get('/contrats', function (req, res) {
+  console.log('GET /contrats');
 
   const refObjet = firebase.database().ref('/contrats');
   console.log("ref() : " + refObjet.toString());
 
-  var data = [];
+  var contrats = [];
   refObjet.once("value", function(snapshot) {
-    data = snapshot;   // JSON format
+      data = snapshot;   // JSON format
 
-    let contrats = snapshotToArray(data);
+      let contrats = snapshotToArray(data);
 
-    for(let contrat of contrats) {
-      console.log("contrat = " + contrat.name);
-    }
+      for(let contrat of contrats) {
+        console.log("contrat = " + contrat.name);
+      }
    
-    //console.log(data);
+      //console.log(data);
 
-    res.send(data);
+      res.send(contrats);
     }
   );
-  console.log("data = " + data);
-
 });
 
+
+app.get('/clauses2/:id', function (req, res) {
+  let id = req.params.id;
+  console.log('GET /clauses2 OK sur id ' + id);
+
+
+  const refObjet = firebase.database().ref('/clauses');
+  console.log("ref() : " + refObjet.toString());
+
+  // **********  à finir *******************
+  // + ajouter index sur idContrat
+
+  var clauses = [];
+//  refObjet.once("value", function(snapshot) {
+  refObjet.orderByChild("idContrat").equalTo(id).once("value", function(snapshot) {
+      data = snapshot;   // JSON format
+
+      let clauses = snapshotToArray(data);
+
+      console.log("clauses : " + clauses);
+
+      for(let clause of clauses) {
+        console.log("clause " + clause.id + " = " + clause.ori
+          + " - " + clause.des);
+      }
+   
+      //console.log(data);
+
+      res.send(clauses);
+    }
+  );
+});
 
 
 
@@ -93,7 +125,7 @@ app.get('/', function (req, res) {
   res.send("Petit curieux !");
 });
 
-app.get('/contrats', function (req, res) {
+app.get('/contrats_old', function (req, res) {
   let contrats = require('./contrats');
   console.log('GET /contrat OK');
   res.send(contrats);
@@ -109,7 +141,7 @@ app.get('/clauses', function (req, res) {
 app.get('/clauses/:id', function (req, res) {
   const moduleClauses = require('./clauses');
   let clauses = moduleClauses.clauses;
-  var id = req.params.id;
+  let id = req.params.id;
   console.log('GET /clauses OK sur id ' + id);
   let clausesFiltrees = moduleClauses.getListeClauses(id);
   res.send(clausesFiltrees);
