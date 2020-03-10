@@ -33,14 +33,11 @@ let db = firebase.database();
 let dbContrats = db.ref('/contrats');
 let dbClauses = db.ref('/clauses');
 
-
+/*
 app.get('/clauses/:id', function (req, res) {
   let id = req.params.id;
-  console.log('GET /clauses2 OK sur id ' + id);
+  console.log('GET /clauses OK sur id ' + id);
 
-  console.log("ref() : " + dbClauses.toString());
-
-  // Lecture des contrats
   dbClauses.once("value", function(snapshot) {
       data = snapshot;   // JSON format
       console.log("id : " + id)
@@ -49,40 +46,70 @@ app.get('/clauses/:id', function (req, res) {
       for(let clause of clauses) {
         console.log("clause = " + clause.ori + "-" + clause.des);
       }
-   
-      //console.log(data);
 
       res.send(clauses);
     }
   );
+});
+*/
+
+// tester avec ABC
+
+app.get('/clauses/:id', function (req, res) {
+  let id = Number(req.params.id);
+  console.log('GET /clauses OK sur id ' + id);
+
+  // Vérification du paramètre
+  if(isNaN(id)) {
+    console.log("invalid parameter");
+    res.send([]);
+  } else {
+
+    // Lecture en BD + filtre
+    dbClauses.orderByChild("idContrat").equalTo(id).once("value", function(snapshot) {
+      data = snapshot;   // JSON format
+      console.log("id : " + id)
+      let clauses = accesBD.snapshotToArray(data, id);
+
+      for(let clause of clauses) {
+        console.log("clause = " + clause.ori + "-" + clause.des);
+      }
+
+      res.send(clauses);
+    });
+  }
+});
 
 
   // **********  à finir *******************
   // + ajouter index sur idContrat
 
   // Lecture en one-shot
+
+  app.get('/contrats2', function (req, res) {
+  console.log('GET /contrats');
+  console.log("ref() : " + dbContrats.toString());
+
+  var contrats = [];
+  let strId="3";
+  // OK avec 6 mais pas avec "6"
+  // conversion de id en nombre
+  
+  });
 /*
-  var clauses = [];
-//  refObjet.once("value", function(snapshot) {
-  dbClauses.orderByChild("idContrat").equalTo(id).once("value", function(snapshot) {
+  // Lecture des contrats
+  dbContrats.orderByChild("id").equalTo(id).once("value", function(snapshot) {
       data = snapshot;   // JSON format
+      let contrats = accesBD.snapshotToArray(data);
 
-      let clauses = accesBD.snapshotToArray(data);
-
-      console.log("clauses : " + clauses);
-
-      for(let clause of clauses) {
-        console.log("clause " + clause.id + " = " + clause.ori
-          + " - " + clause.des);
+      for(let contrat of contrats) {
+        console.log("contrat = " + contrat.name);
       }
-   
-      //console.log(data);
-
-      res.send(clauses);
+      res.send(contrats);
     }
   );
-*/
 });
+*/
 
 
 // ===========
@@ -91,28 +118,6 @@ app.get('/clauses/:id', function (req, res) {
 app.get('/', function (req, res) {
   console.log('GET / OK');
   res.send("Petit curieux !");
-});
-
-app.get('/contrats_old', function (req, res) {
-  let contrats = require('./contrats');
-  console.log('GET /contrat OK');
-  res.send(contrats);
-});
-
-// à enlever une fois en BD
-app.get('/clauses_old', function (req, res) {
-  let clauses = require('./clauses');
-  console.log('GET /clauses OK');
-  res.send(clauses);
-});
-
-app.get('/clauses/:id', function (req, res) {
-  const moduleClauses = require('./clauses');
-  let clauses = moduleClauses.clauses;
-  let id = req.params.id;
-  console.log('GET /clauses OK sur id ' + id);
-  let clausesFiltrees = moduleClauses.getListeClauses(id);
-  res.send(clausesFiltrees);
 });
 
 app.get('/shuttles', function (req, res) {
@@ -130,23 +135,17 @@ app.get('/hotels', function (req, res) {
 // En BD
 app.get('/contrats', function (req, res) {
   console.log('GET /contrats');
-
-  // Accès BD
   console.log("ref() : " + dbContrats.toString());
 
   var contrats = [];
   // Lecture des contrats
   dbContrats.once("value", function(snapshot) {
       data = snapshot;   // JSON format
-
       let contrats = accesBD.snapshotToArray(data);
 
       for(let contrat of contrats) {
         console.log("contrat = " + contrat.name);
       }
-   
-      //console.log(data);
-
       res.send(contrats);
     }
   );
@@ -166,4 +165,32 @@ app.post('/shuttles', function(req, res) {
 
 app.listen(port, function () {
   console.log('App sur port ' + port);
+});
+
+
+
+
+// ===========
+// === OLD ===
+// ===========
+app.get('/contrats_old', function (req, res) {
+  let contrats = require('./contrats_old');
+  console.log('GET /contrat_old OK');
+  res.send(contrats);
+});
+
+// à enlever une fois en BD
+app.get('/clauses_old', function (req, res) {
+  let clauses = require('./clauses_old');
+  console.log('GET /clauses_old OK');
+  res.send(clauses);
+});
+
+app.get('/clauses_old/:id', function (req, res) {
+  const moduleClauses = require('./clauses');
+  let clauses = moduleClauses.clauses;
+  let id = req.params.id;
+  console.log('GET /clauses_old OK sur id ' + id);
+  let clausesFiltrees = moduleClauses.getListeClauses(id);
+  res.send(clausesFiltrees);
 });
