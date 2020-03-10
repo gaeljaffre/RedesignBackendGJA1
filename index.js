@@ -133,7 +133,7 @@ app.get('/clauses_old', function (req, res) {
 });
 
 app.get('/clauses_old/:id', function (req, res) {
-  const moduleClauses = require('./clauses');
+  const moduleClauses = require('./clauses_old');
   let clauses = moduleClauses.clauses;
   let id = req.params.id;
   console.log('GET /clauses_old OK sur id ' + id);
