@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const port = 3000;
+const accesBD = require('./accesBD');
 //var cors = require('cors');
 
 app.use(function(req, res, next) {
@@ -16,11 +17,10 @@ const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-
-// Connexion Firebase
-
+// **********************
+// * Connexion Firebase *
+// **********************
 var firebase = require("firebase-admin");
-
 var serviceAccount = require("./serviceAccountKey.json");
 
 firebase.initializeApp({
@@ -28,78 +28,46 @@ firebase.initializeApp({
   databaseURL: "https://testbd1-c5167.firebaseio.com"
 });
 
+// Collections dans la real-time DB
+let db = firebase.database();
+let dbContrats = db.ref('/contrats');
+let dbClauses = db.ref('/clauses');
 
-/*
-  var ref = firebase.database().ref('/contrats');
-  var obj = {"id":1,"name":"TOTAL","description":"The most famous client","country":"XX","type":"Global market","gin":"180012345678","ddv":"01/01/2020","dfv":"31/12/2020"};
-  ref.push(obj);
-*/
 
-/*
-var ref = firebase.database().ref('/contrats');
+app.get('/clauses/:id', function (req, res) {
+  let id = req.params.id;
+  console.log('GET /clauses2 OK sur id ' + id);
 
-var obj = {"id":2,"name":"BUTAGAZ","description":"The best case study for Catherine","country":"FR","type":"Standard","gin":"180000000001","ddv":"01/01/2020","dfv":"31/12/2020"};
-ref.push(obj);
-*/
+  console.log("ref() : " + dbClauses.toString());
 
-var ref = firebase.database().ref('/contrats');
-
-//var db = firebase.database();
-
-function snapshotToArray(snapshot) {
-    var returnArr = [];
-
-    snapshot.forEach(function(childSnapshot) {
-        var item = childSnapshot.val();
-        item.key = childSnapshot.key;
-
-        returnArr.push(item);
-    });
-
-    return returnArr;
-};
-
-app.get('/contrats', function (req, res) {
-  console.log('GET /contrats');
-
-  const refObjet = firebase.database().ref('/contrats');
-  console.log("ref() : " + refObjet.toString());
-
-  var contrats = [];
-  refObjet.once("value", function(snapshot) {
+  // Lecture des contrats
+  dbClauses.once("value", function(snapshot) {
       data = snapshot;   // JSON format
+      console.log("id : " + id)
+      let clauses = accesBD.snapshotToArray(data, id);
 
-      let contrats = snapshotToArray(data);
-
-      for(let contrat of contrats) {
-        console.log("contrat = " + contrat.name);
+      for(let clause of clauses) {
+        console.log("clause = " + clause.ori + "-" + clause.des);
       }
    
       //console.log(data);
 
-      res.send(contrats);
+      res.send(clauses);
     }
   );
-});
 
-
-app.get('/clauses2/:id', function (req, res) {
-  let id = req.params.id;
-  console.log('GET /clauses2 OK sur id ' + id);
-
-
-  const refObjet = firebase.database().ref('/clauses');
-  console.log("ref() : " + refObjet.toString());
 
   // **********  à finir *******************
   // + ajouter index sur idContrat
 
+  // Lecture en one-shot
+/*
   var clauses = [];
 //  refObjet.once("value", function(snapshot) {
-  refObjet.orderByChild("idContrat").equalTo(id).once("value", function(snapshot) {
+  dbClauses.orderByChild("idContrat").equalTo(id).once("value", function(snapshot) {
       data = snapshot;   // JSON format
 
-      let clauses = snapshotToArray(data);
+      let clauses = accesBD.snapshotToArray(data);
 
       console.log("clauses : " + clauses);
 
@@ -113,8 +81,8 @@ app.get('/clauses2/:id', function (req, res) {
       res.send(clauses);
     }
   );
+*/
 });
-
 
 
 // ===========
@@ -132,7 +100,7 @@ app.get('/contrats_old', function (req, res) {
 });
 
 // à enlever une fois en BD
-app.get('/clauses', function (req, res) {
+app.get('/clauses_old', function (req, res) {
   let clauses = require('./clauses');
   console.log('GET /clauses OK');
   res.send(clauses);
@@ -158,6 +126,32 @@ app.get('/hotels', function (req, res) {
   console.log('GET /hotels OK');
   res.send(hotels);
 });
+
+// En BD
+app.get('/contrats', function (req, res) {
+  console.log('GET /contrats');
+
+  // Accès BD
+  console.log("ref() : " + dbContrats.toString());
+
+  var contrats = [];
+  // Lecture des contrats
+  dbContrats.once("value", function(snapshot) {
+      data = snapshot;   // JSON format
+
+      let contrats = accesBD.snapshotToArray(data);
+
+      for(let contrat of contrats) {
+        console.log("contrat = " + contrat.name);
+      }
+   
+      //console.log(data);
+
+      res.send(contrats);
+    }
+  );
+});
+
 
 // ============
 // === POST ===
