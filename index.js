@@ -33,28 +33,50 @@ let db = firebase.database();
 let dbContrats = db.ref('/contrats');
 let dbClauses = db.ref('/clauses');
 
-/*
-app.get('/clauses/:id', function (req, res) {
-  let id = req.params.id;
-  console.log('GET /clauses OK sur id ' + id);
+// ===========
+// === GET ===
+// ===========
+app.get('/', function (req, res) {
+  console.log('GET / OK');
+  res.send("Petit curieux !");
+});
 
-  dbClauses.once("value", function(snapshot) {
+app.get('/shuttles', function (req, res) {
+  let shuttles = require('./shuttles');
+  console.log('GET /shuttles OK');
+  res.send(shuttles);
+});
+
+app.get('/hotels', function (req, res) {
+  let hotels = require('./hotels');
+  console.log('GET /hotels OK');
+  res.send(hotels);
+});
+
+/************/
+/* Contrats */
+/************/
+app.get('/contrats', function (req, res) {
+  console.log('GET /contrats');
+  console.log("ref() : " + dbContrats.toString());
+
+  var contrats = [];
+  // Lecture des contrats
+  dbContrats.once("value", function(snapshot) {
       data = snapshot;   // JSON format
-      console.log("id : " + id)
-      let clauses = accesBD.snapshotToArray(data, id);
+      let contrats = accesBD.snapshotToArray(data);
 
-      for(let clause of clauses) {
-        console.log("clause = " + clause.ori + "-" + clause.des);
+      for(let contrat of contrats) {
+        console.log("contrat = " + contrat.name);
       }
-
-      res.send(clauses);
+      res.send(contrats);
     }
   );
 });
-*/
 
-// tester avec ABC
-
+/***********/
+/* Clauses */
+/***********/
 app.get('/clauses/:id', function (req, res) {
   let id = Number(req.params.id);
   console.log('GET /clauses OK sur id ' + id);
@@ -81,77 +103,6 @@ app.get('/clauses/:id', function (req, res) {
 });
 
 
-  // **********  à finir *******************
-  // + ajouter index sur idContrat
-
-  // Lecture en one-shot
-
-  app.get('/contrats2', function (req, res) {
-  console.log('GET /contrats');
-  console.log("ref() : " + dbContrats.toString());
-
-  var contrats = [];
-  let strId="3";
-  // OK avec 6 mais pas avec "6"
-  // conversion de id en nombre
-  
-  });
-/*
-  // Lecture des contrats
-  dbContrats.orderByChild("id").equalTo(id).once("value", function(snapshot) {
-      data = snapshot;   // JSON format
-      let contrats = accesBD.snapshotToArray(data);
-
-      for(let contrat of contrats) {
-        console.log("contrat = " + contrat.name);
-      }
-      res.send(contrats);
-    }
-  );
-});
-*/
-
-
-// ===========
-// === GET ===
-// ===========
-app.get('/', function (req, res) {
-  console.log('GET / OK');
-  res.send("Petit curieux !");
-});
-
-app.get('/shuttles', function (req, res) {
-  let shuttles = require('./shuttles');
-  console.log('GET /shuttles OK');
-  res.send(shuttles);
-});
-
-app.get('/hotels', function (req, res) {
-  let hotels = require('./hotels');
-  console.log('GET /hotels OK');
-  res.send(hotels);
-});
-
-// En BD
-app.get('/contrats', function (req, res) {
-  console.log('GET /contrats');
-  console.log("ref() : " + dbContrats.toString());
-
-  var contrats = [];
-  // Lecture des contrats
-  dbContrats.once("value", function(snapshot) {
-      data = snapshot;   // JSON format
-      let contrats = accesBD.snapshotToArray(data);
-
-      for(let contrat of contrats) {
-        console.log("contrat = " + contrat.name);
-      }
-      res.send(contrats);
-    }
-  );
-});
-
-
 // ============
 // === POST ===
 // ============
@@ -161,14 +112,9 @@ app.post('/shuttles', function(req, res) {
   res.status(201).send(req.body);
 });
 
-
-
 app.listen(port, function () {
   console.log('App sur port ' + port);
 });
-
-
-
 
 // ===========
 // === OLD ===
