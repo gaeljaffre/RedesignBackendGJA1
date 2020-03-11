@@ -110,17 +110,10 @@ app.get('/shuttles', function (req, res) {
       data = snapshot;   // JSON format
       let shuttles = accesBD.snapshotToArray(data);
 
-/*      
-      for(let shuttle of shuttles) {
-        console.log("shuttle = " + shuttle.name);
-      }
-*/
-
       res.send(shuttles);
     }
   );
 });
-
 
 // ============
 // === POST ===
@@ -139,6 +132,15 @@ app.post('/shuttles', function(req, res) {
 app.listen(port, function () {
   console.log('App sur port ' + port);
 });
+
+
+// ==============
+// === DELETE ===
+// ==============
+// à faire
+
+
+
 
 // ===========
 // === OLD ===
