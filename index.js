@@ -32,6 +32,7 @@ firebase.initializeApp({
 let db = firebase.database();
 let dbContrats = db.ref('/contrats');
 let dbClauses = db.ref('/clauses');
+let dbShuttles = db.ref('/shuttles');
 
 // ===========
 // === GET ===
@@ -39,12 +40,6 @@ let dbClauses = db.ref('/clauses');
 app.get('/', function (req, res) {
   console.log('GET / OK');
   res.send("Petit curieux !");
-});
-
-app.get('/shuttles', function (req, res) {
-  let shuttles = require('./shuttles');
-  console.log('GET /shuttles OK');
-  res.send(shuttles);
 });
 
 app.get('/hotels', function (req, res) {
@@ -60,7 +55,7 @@ app.get('/contrats', function (req, res) {
   console.log('GET /contrats');
   console.log("ref() : " + dbContrats.toString());
 
-  var contrats = [];
+  let contrats = [];
   // Lecture des contrats
   dbContrats.once("value", function(snapshot) {
       data = snapshot;   // JSON format
@@ -102,13 +97,42 @@ app.get('/clauses/:id', function (req, res) {
   }
 });
 
+/************/
+/* Shuttles */
+/************/
+app.get('/shuttles', function (req, res) {
+  console.log('GET /shuttles');
+  //console.log("ref() : " + dbShuttles.toString());
+
+  let shuttles = [];
+  // Lecture des contrats
+  dbShuttles.once("value", function(snapshot) {
+      data = snapshot;   // JSON format
+      let shuttles = accesBD.snapshotToArray(data);
+
+/*      
+      for(let shuttle of shuttles) {
+        console.log("shuttle = " + shuttle.name);
+      }
+*/
+
+      res.send(shuttles);
+    }
+  );
+});
+
 
 // ============
 // === POST ===
 // ============
 app.post('/shuttles', function(req, res) {
-  console.log('post / OK : ' + req.body.name
-  + '(' + req.body.type + ')');
+  let shuttle = req.body;
+  console.log('post /shuttles OK : ' + shuttle.name
+  + ' (' + shuttle.type + ')');
+
+  // insertion dans la BD
+  dbShuttles.push(shuttle);
+
   res.status(201).send(req.body);
 });
 
@@ -139,4 +163,10 @@ app.get('/clauses_old/:id', function (req, res) {
   console.log('GET /clauses_old OK sur id ' + id);
   let clausesFiltrees = moduleClauses.getListeClauses(id);
   res.send(clausesFiltrees);
+});
+
+app.get('/shuttles_old', function (req, res) {
+  let shuttles = require('./shuttles_old');
+  console.log('GET /shuttles_old OK');
+  res.send(shuttles);
 });
