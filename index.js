@@ -33,6 +33,7 @@ let db = firebase.database();
 let dbContrats = db.ref('/contrats');
 let dbClauses = db.ref('/clauses');
 let dbShuttles = db.ref('/shuttles');
+let dbHotels = db.ref('/hotels');
 
 // ===========
 // === GET ===
@@ -40,12 +41,6 @@ let dbShuttles = db.ref('/shuttles');
 app.get('/', function (req, res) {
   console.log('GET / OK');
   res.send("Petit curieux !");
-});
-
-app.get('/hotels', function (req, res) {
-  let hotels = require('./hotels');
-  console.log('GET /hotels OK');
-  res.send(hotels);
 });
 
 /************/
@@ -56,7 +51,6 @@ app.get('/contrats', function (req, res) {
   console.log("ref() : " + dbContrats.toString());
 
   let contrats = [];
-  // Lecture des contrats
   dbContrats.once("value", function(snapshot) {
       data = snapshot;   // JSON format
       let contrats = accesBD.snapshotToArray(data);
@@ -88,10 +82,11 @@ app.get('/clauses/:id', function (req, res) {
       console.log("id : " + id)
       let clauses = accesBD.snapshotToArray(data, id);
 
+/*
       for(let clause of clauses) {
         console.log("clause = " + clause.ori + "-" + clause.des);
       }
-
+*/
       res.send(clauses);
     });
   }
@@ -102,15 +97,29 @@ app.get('/clauses/:id', function (req, res) {
 /************/
 app.get('/shuttles', function (req, res) {
   console.log('GET /shuttles');
-  //console.log("ref() : " + dbShuttles.toString());
 
   let shuttles = [];
-  // Lecture des contrats
   dbShuttles.once("value", function(snapshot) {
       data = snapshot;   // JSON format
       let shuttles = accesBD.snapshotToArray(data);
 
       res.send(shuttles);
+    }
+  );
+});
+
+/**********/
+/* Hotels */
+/**********/
+app.get('/hotels', function (req, res) {
+  console.log('GET /hotels');
+
+  let hotels = [];
+  dbHotels.once("value", function(snapshot) {
+      data = snapshot;   // JSON format
+      let hotels = accesBD.snapshotToArray(data);
+
+      res.send(hotels);
     }
   );
 });
@@ -137,8 +146,31 @@ app.listen(port, function () {
 // ==============
 // === DELETE ===
 // ==============
-// à faire
+app.delete('/shuttles/:key', function (req, res) {
 
+  let key = req.params.key;
+  console.log('DELETE /shuttles OK sur key ' + key);
+
+  // Vérification du paramètre
+  if(key == "" || key == undefined) {
+    console.log("invalid parameter");
+    res.send([]);
+  } else {
+
+    let shuttle = {"key": key};
+    console.log("shuttle = " + shuttle)
+
+    // XXX à faire : supprimer dans la BD
+
+  }
+
+});
+
+app.delete('/test', function (req, res) {
+
+  console.log('DELETE /shuttles OK sur /test');
+
+});
 
 
 
@@ -171,4 +203,10 @@ app.get('/shuttles_old', function (req, res) {
   let shuttles = require('./shuttles_old');
   console.log('GET /shuttles_old OK');
   res.send(shuttles);
+});
+
+app.get('/hotels_old', function (req, res) {
+  let hotels = require('./hotels_old');
+  console.log('GET /hotels_old OK');
+  res.send(hotels);
 });
